@@ -41,7 +41,7 @@ namespace Assets.Scripts
             materials.Add(Resources.Load("Pink") as GameObject);
             materials.Add(Resources.Load("Yellow") as GameObject);
 
-            // ƒTƒCƒYæ‚é‚¾‚¯‚È‚Ì‚Å‚Ç‚ê‚Å‚à‚¢‚¢
+            // ã‚µã‚¤ã‚ºå–ã‚‹ã ã‘ãªã®ã§ã©ã‚Œã§ã‚‚ã„ã„
             var renderer = materials[0].GetComponent<SpriteRenderer>();
             var size = renderer.bounds.size;
             var count = MaxX;
@@ -54,7 +54,7 @@ namespace Assets.Scripts
                 {
                     var randomIndex = Random.Range(0, materials.Count);
                     var ins = Instantiate(materials[randomIndex]) as GameObject;
-                    // z==0 ‚¾‚Æ•\¦‚³‚ê‚È‚¢
+                    // z==0 ã ã¨è¡¨ç¤ºã•ã‚Œãªã„
                     ins.transform.position = new Vector3(lenX * i, -lenY * j, 10) + zeroPos + new Vector3(lenX / 2, -lenY / 2, 0);
                     ins.transform.parent = parent.transform;
                     var handler = ins.GetComponent<TouchHandler>();
@@ -131,7 +131,7 @@ namespace Assets.Scripts
             {
                 if (blockInfo.color == block.color)
                 {
-                    // TODO: ƒ`ƒFƒbƒNÏ‚İ‚Ì”»’è
+                    // TODO: ãƒã‚§ãƒƒã‚¯æ¸ˆã¿ã®åˆ¤å®š
                     SearchAndDestroy(block.pos.x, block.pos.y, blockInfo);
                     Debug.Log(block.pos);
                     Destroy(block.block);
