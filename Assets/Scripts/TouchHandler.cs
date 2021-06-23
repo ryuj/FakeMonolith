@@ -4,11 +4,13 @@ using UnityEngine.EventSystems;
 namespace Assets.Scripts
 {
     public class TouchHandler : MonoBehaviour
-   {
+    {
+        public string handlerId;
+        public ITouchParent parent;
+
         public void OnClick(BaseEventData data)
         {
-            Debug.Log("yes");
-            Destroy(gameObject);
+            parent.OnClick(handlerId, this.gameObject);
         }
     }
 }
