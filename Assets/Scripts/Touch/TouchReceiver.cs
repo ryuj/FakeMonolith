@@ -3,14 +3,14 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Scripts
 {
-    public class TouchHandler : MonoBehaviour
+    public class TouchReceiver : MonoBehaviour
     {
         public string handlerId;
-        public ITouchParent parent;
+        public ITouchConductor conductor;
 
         public void OnClick(BaseEventData data)
         {
-            parent.OnClick(handlerId, this.gameObject);
+            conductor.OnClick(handlerId, this.gameObject);
         }
     }
 }

@@ -3,11 +3,6 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public interface ITouchParent
-    {
-        public void OnClick(string id, GameObject gameObject);
-    }
-
     public enum Color
     {
         White,
@@ -15,7 +10,7 @@ namespace Assets.Scripts
         Yellow
     }
 
-    public class GameMain : MonoBehaviour, ITouchParent
+    public class GameMain : MonoBehaviour
     {
         public struct BlockInfo
         {
@@ -27,9 +22,9 @@ namespace Assets.Scripts
 
         private Camera mainCamera;
         private readonly List<GameObject> materials = new List<GameObject>();
-        private readonly List<BlockInfo> blockInfos = new List<BlockInfo>();
         private const int MaxX = 5;
-        private const int MaxY = MaxX;
+        private readonly TouchConductor conductor = new TouchConductor();
+
         // Start is called before the first frame update
         void Start()
         {
@@ -48,6 +43,7 @@ namespace Assets.Scripts
             var lenX = size.x;
             var lenY = size.y;
             var parent = GameObject.Find("Parent");
+            var blockInfos = new List<BlockInfo>();
             for (var i = 0; i < count; ++i)
             {
                 for (var j = 0; j < count; ++j)
@@ -57,9 +53,9 @@ namespace Assets.Scripts
                     // z==0 だと表示されない
                     ins.transform.position = new Vector3(lenX * i, -lenY * j, 10) + zeroPos + new Vector3(lenX / 2, -lenY / 2, 0);
                     ins.transform.parent = parent.transform;
-                    var handler = ins.GetComponent<TouchHandler>();
-                    handler.parent = this;
-                    handler.handlerId = GetIndexFromPos(i, j).ToString();
+                    var receiver = ins.GetComponent<TouchReceiver>();
+                    receiver.conductor = conductor;
+                    receiver.handlerId = GetIndexFromPos(i, j).ToString();
 
                     var info = new BlockInfo
                     {
@@ -71,72 +67,12 @@ namespace Assets.Scripts
                     blockInfos.Add(info);
                 }
             }
-        }
-
-        private IEnumerable<BlockInfo> SearchNeighborBlock(int x, int y)
-        {
-            // top
-            if (x % MaxX > 0)
-                yield return blockInfos[GetIndexFromPos(x - 1, y)];
-            // left
-            if (y % MaxY > 0)
-                yield return blockInfos[GetIndexFromPos(x, y - 1)];
-            // right
-            if (x % MaxX != MaxX - 1)
-                yield return blockInfos[GetIndexFromPos(x + 1, y)];
-            // bottom
-            if (y % MaxY != MaxY - 1)
-                yield return blockInfos[GetIndexFromPos(x, y + 1)];
+            conductor.blockInfos = blockInfos;
         }
 
         private int GetIndexFromPos(int x, int y)
         {
             return x * MaxX + y;
-        }
-
-        private (int, int) GetPosFromIndex(int index)
-        {
-            return (index / MaxX, index % MaxX);
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
-        public void OnClick(string id, GameObject gameObject)
-        {
-            Debug.Log(id);
-            var index = int.Parse(id);
-            (int x, int y) pos = GetPosFromIndex(index);
-            Debug.Log(pos);
-            Destroy(gameObject);
-
-            Debug.Log("-- begin --");
-            foreach (var block in SearchNeighborBlock(pos.x, pos.y))
-            {
-                if (blockInfos[index].color == block.color)
-                {
-                    Debug.Log(block.pos);
-                    Destroy(block.block);
-                }
-            }
-            Debug.Log("-- end --");
-        }
-
-        public void SearchAndDestroy(int x, int y, BlockInfo blockInfo)
-        {
-            foreach (var block in SearchNeighborBlock(x, y))
-            {
-                if (blockInfo.color == block.color)
-                {
-                    // TODO: チェック済みの判定
-                    SearchAndDestroy(block.pos.x, block.pos.y, blockInfo);
-                    Debug.Log(block.pos);
-                    Destroy(block.block);
-                }
-            }
         }
     }
 }
