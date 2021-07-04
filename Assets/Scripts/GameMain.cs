@@ -12,14 +12,6 @@ namespace Assets.Scripts
 
     public class GameMain : MonoBehaviour
     {
-        public struct BlockInfo
-        {
-            public GameObject block;
-            public (int x, int y) pos;
-            public Color color;
-            public bool active;
-        }
-
         private Camera mainCamera;
         private readonly List<GameObject> materials = new List<GameObject>();
         private const int MaxX = 5;
@@ -40,39 +32,18 @@ namespace Assets.Scripts
             var renderer = materials[0].GetComponent<SpriteRenderer>();
             var size = renderer.bounds.size;
             var count = MaxX;
-            var lenX = size.x;
-            var lenY = size.y;
             var parent = GameObject.Find("Parent");
-            var blockInfos = new List<BlockInfo>();
-            for (var i = 0; i < count; ++i)
-            {
-                for (var j = 0; j < count; ++j)
-                {
-                    var randomIndex = Random.Range(0, materials.Count);
-                    var ins = Instantiate(materials[randomIndex]) as GameObject;
-                    // z==0 だと表示されない
-                    ins.transform.position = new Vector3(lenX * i, -lenY * j, 10) + zeroPos + new Vector3(lenX / 2, -lenY / 2, 0);
-                    ins.transform.parent = parent.transform;
-                    var receiver = ins.GetComponent<TouchReceiver>();
-                    receiver.conductor = conductor;
-                    receiver.handlerId = GetIndexFromPos(i, j).ToString();
 
-                    var info = new BlockInfo
-                    {
-                        block = ins,
-                        pos = (i, j),
-                        color = (Color)randomIndex,
-                        active = true,
-                    };
-                    blockInfos.Add(info);
-                }
-            }
-            conductor.blockInfos = blockInfos;
-        }
+            var manager = new BlockManager();
+            manager.SetConfig(new Config {
+                kindCount = 3,
+                parent = parent,
+                zeroPos = zeroPos,
+                tileSize = size,
+                conductor = conductor
+            }).Create(count);
 
-        private int GetIndexFromPos(int x, int y)
-        {
-            return x * MaxX + y;
+            conductor.manager = manager;
         }
     }
 }
