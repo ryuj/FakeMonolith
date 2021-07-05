@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Assets.Scripts
+namespace Touch
 {
     public class TouchReceiver : MonoBehaviour
     {

@@ -1,26 +1,28 @@
-using Assets.Scripts;
 using UnityEngine;
 
-public class TouchConductor : ITouchConductor
+namespace Touch
 {
-    public BlockManager manager;
-    public void OnClick(string id, GameObject gameObject)
+    public class TouchConductor : ITouchConductor
     {
-        Debug.Log($"touched: {id}");
-        var index = int.Parse(id);
-        (int x, int y) pos = manager.GetPosFromIndex(index);
-        Debug.Log(pos);
-        GameObject.Destroy(gameObject);
-
-        Debug.Log("-- begin --");
-        foreach (var block in manager.SearchNeighborBlock(pos.x, pos.y))
+        public BlockManager manager;
+        public void OnClick(string id, GameObject gameObject)
         {
-            if (manager.blocks[index].color == block.color)
+            Debug.Log($"touched: {id}");
+            var index = int.Parse(id);
+            (int x, int y) pos = BlockManager.GetPosFromIndex(index);
+            Debug.Log(pos);
+            Object.Destroy(gameObject);
+
+            Debug.Log("-- begin --");
+            foreach (var block in manager.SearchNeighborBlock(pos.x, pos.y))
             {
-                Debug.Log(block.pos);
-                GameObject.Destroy(block.block);
+                if (manager.blocks[index].color == block.color)
+                {
+                    Debug.Log(block.pos);
+                    Object.Destroy(block.block);
+                }
             }
+            Debug.Log("-- end --");
         }
-        Debug.Log("-- end --");
     }
 }

@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public interface ITouchConductor
+namespace Touch
 {
-    public void OnClick(string id, GameObject gameObject);
+    public interface ITouchConductor
+    {
+        public void OnClick(string id, GameObject gameObject);
+    }
 }
